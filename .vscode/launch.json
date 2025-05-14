@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/jakerase/Desktop/python-compiler",
+      "program": "/Users/jakerase/Desktop/python-compiler/build/Debug/outDebug"
+    }
+  ]
+}

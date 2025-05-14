@@ -1,0 +1,16 @@
+opname      , opcode, arg, argval, argrepr     , offset, starts_line, is_jump_target
+RESUME      ,    151,   0, 0     ,             ,      0,           4, False
+LOAD_CONST  ,    100,   1, Jake  , 'Jake'      ,      2,           5, False
+STORE_FAST  ,    125,   0, name  , name        ,      4,            , False
+LOAD_CONST  ,    100,   2, 30    , 30          ,      6,           6, False
+STORE_FAST  ,    125,   1, age   , age         ,      8,            , False
+LOAD_FAST   ,    124,   1, age   , age         ,     10,           7, False
+LOAD_CONST  ,    100,   3, 1     , 1           ,     12,            , False
+BINARY_OP   ,    122,  10, 10    , -           ,     14,            , False
+STORE_FAST  ,    125,   2, age1  , age1        ,     18,            , False
+LOAD_GLOBAL ,    116,   1, print , NULL + print,     20,           8, False
+LOAD_FAST   ,    124,   2, age1  , age1        ,     30,            , False
+LOAD_FAST   ,    124,   0, name  , name        ,     32,            , False
+CALL        ,    171,   2, 2     ,             ,     34,            , False
+POP_TOP     ,      1,    ,       ,             ,     42,            , False
+RETURN_CONST,    121,   0,       , None        ,     44,           9, False
