@@ -1,4 +1,5 @@
 import subprocess
+import dis
 
 
 ############################
@@ -11,8 +12,8 @@ import subprocess
 
 
 class Compiler:
-    def __init__(self, instructions):
-        self.instructions = instructions
+    def __init__(self, function):
+        self.instructions = dis.get_instructions(function)
         self.debug_stack = []
         self.main_stack = []
         self.transpiled_commands = []

@@ -1,5 +1,4 @@
 from utils import Compiler
-import dis
 
 def main():
     name = "Kevin"
@@ -8,7 +7,7 @@ def main():
     print(age, name, age1 - 1)
     pass
 
-Compiler = Compiler(dis.get_instructions(main))
+Compiler = Compiler(main)
 Compiler.compile(
     output_name="output",
     trace_stack=False,
