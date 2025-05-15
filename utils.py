@@ -48,6 +48,7 @@ class Compiler:
         self.debug_stack = []
         self.main_stack = []
         self.transpiled_commands = []
+        self.optionals = []
         self.opcode_map = {
             100: "self.load_const(instruction)",
             125: "self.store_fast(instruction)",
@@ -56,7 +57,6 @@ class Compiler:
             116: "self.load_global(instruction)",
             171: "self.call_function(instruction)",
         }
-        self.optionals = []
         
     ###########################
     #
@@ -87,28 +87,25 @@ class Compiler:
     def call_function(self, instruction):
         self.debug_print(instruction.opcode, instruction.argval)
         
-        # Extract function arguments from the stack
+        
         arg_count = instruction.arg
         args = []
         for _ in range(arg_count):
             if self.main_stack:
                 args.append(self.main_stack.pop())
         
-        # Get the function name
         if self.main_stack and self.main_stack[-1].com_type == "GLOBAL":
             function_name = self.main_stack.pop().argval
             
-            # Handle specific functions                                                           make more efficient!!!!
+            #                                                                                    make more efficient!!!!
             if function_name == "print":
                 self._handle_print_function(args)
             elif function_name == "type":
                 self._handle_type_function(args)
             else:
-                # For unsupported functions
                 self.transpiled_commands.append(f"// Unsupported function: {function_name}")
     
     def _handle_print_function(self, args):
-        # Format args for Rust println!
         if not args:
             self.transpiled_commands.append('println!();')
             return
@@ -125,10 +122,8 @@ class Compiler:
                 rust_args.append((arg.argval, "CONST"))
         
         format_string = " ".join(format_placeholders)
-        # Convert Python args to Rust format, ensuring variables aren't quoted
         args_string = ""
         for idx, arg in enumerate(rust_args):
-            # Check if this looks like a variable reference
             if arg[1] == "FAST":
                 args_string += f"{arg[0]}"
             elif isinstance(arg[0], str):
@@ -136,14 +131,12 @@ class Compiler:
             else:
                 args_string += str(arg[0])
                 
-            # Add separator if not the last element
             if idx < len(rust_args) - 1:
                 args_string += ", "
         
         self.transpiled_commands.append(f'println!("{format_string}", {args_string});')
         
     def _handle_type_function(self, args):
-        # Format args for Rust println!
         self.main_stack.append(self.Stack_Object.create(_type=None, com_type="TYPE", argval=f"o_type(&{args[0].argval})"))
         if "type" not in self.optionals:
             self.optionals.append("type")
