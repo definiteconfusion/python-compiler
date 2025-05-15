@@ -1,6 +1,5 @@
 import subprocess
 import dis
-from utils import Compiler
 
 
 ############################
@@ -57,6 +56,7 @@ class Compiler:
             116: "self.load_global(instruction)",
             171: "self.call_function(instruction)",
         }
+        self.optionals = []
         
     ###########################
     #
@@ -98,9 +98,11 @@ class Compiler:
         if self.main_stack and self.main_stack[-1].com_type == "GLOBAL":
             function_name = self.main_stack.pop().argval
             
-            # Handle specific functions
+            # Handle specific functions                                                           make more efficient!!!!
             if function_name == "print":
                 self._handle_print_function(args)
+            elif function_name == "type":
+                self._handle_type_function(args)
             else:
                 # For unsupported functions
                 self.transpiled_commands.append(f"// Unsupported function: {function_name}")
@@ -139,6 +141,12 @@ class Compiler:
                 args_string += ", "
         
         self.transpiled_commands.append(f'println!("{format_string}", {args_string});')
+        
+    def _handle_type_function(self, args):
+        # Format args for Rust println!
+        self.main_stack.append(self.Stack_Object.create(_type=None, com_type="TYPE", argval=f"o_type(&{args[0].argval})"))
+        if "type" not in self.optionals:
+            self.optionals.append("type")
         
                            
             
@@ -183,6 +191,9 @@ class Compiler:
     ###########################
     
     def compile(self, output_name, trace_stack=False, print_output=False):
+        optionals = {
+            "type": "fn o_type<T>(t: &T) -> String {\n    std::any::type_name::<T>().to_string()\n}"
+        }
         for instruction in self.instructions:
             if instruction.opcode in self.opcode_map:
                 exec(self.opcode_map[instruction.opcode])
@@ -197,6 +208,11 @@ class Compiler:
                 print(item)
                 
         with open(f"{output_name}.rs", "w") as f:
+            for optional in self.optionals:
+                if optional in optionals:
+                    f.write(optionals[optional])
+                    f.write("\n")
+                f.write("\n")
             f.write("fn main() {\n")
             for command in self.transpiled_commands:
                 f.write(f"    {command}\n")

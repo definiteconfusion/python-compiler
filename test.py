@@ -4,7 +4,8 @@ def main():
     name = "Kevin"
     age = 30
     age1 = age + 1
-    print(age, name, age1 - 1)
+    type_of_name = type(name)
+    print(age, name)
     pass
 
 Compiler = Compiler(main)
