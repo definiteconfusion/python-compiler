@@ -1,5 +1,6 @@
 import subprocess
 import dis
+from utils import Compiler
 
 
 ############################
@@ -12,6 +13,37 @@ import dis
 
 
 class Compiler:
+    """
+    Compiler class for Python-to-Rust transpilation.
+    This class takes a Python function and converts its bytecode instructions to equivalent
+    Rust code, which can then be compiled and executed as a standalone Rust program.
+    The compiler works by:
+    1. Disassembling the Python function to get its bytecode instructions
+    2. Mapping each Python opcode to a corresponding method that generates Rust code
+    3. Tracking values on the stack during the transpilation process
+    4. Generating Rust code that achieves the same functionality
+    Currently supported Python operations:
+    - Basic variable assignment
+    - Arithmetic operations (addition, subtraction)
+    - Print statements
+    - Loading constants and variables
+    - Function calls (limited to print())
+    Attributes:
+        instructions: Iterator for the disassembled bytecode instructions.
+        debug_stack: List tracking operation sequence for debugging.
+        main_stack: List simulating the Python interpreter stack during compilation.
+        transpiled_commands: List of generated Rust code statements.
+        opcode_map: Dictionary mapping Python opcodes to handler methods.
+    Example:
+        ```
+        def example_function():
+            x = 5
+            y = 10
+            print(x + y)
+        compiler = Compiler(example_function)
+        compiler.compile("output", print_output=True)
+        ```
+    """
     def __init__(self, function):
         self.instructions = dis.get_instructions(function)
         self.debug_stack = []
