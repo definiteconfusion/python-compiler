@@ -103,7 +103,7 @@ class Compiler:
             elif function_name == "type":
                 self._handle_type_function(args)
             else:
-                self.transpiled_commands.append(f"// Unsupported function: {function_name}")
+                self.transpiled_commands.append(f"/* Unsupported function: {function_name} */")
     
     def _handle_print_function(self, args):
         if not args:
@@ -183,13 +183,16 @@ class Compiler:
     #
     ###########################
     
-    def compile(self, output_name, trace_stack=False, print_output=False):
+    def compile(self, output_name, trace_stack=False, print_output=False, dev_mode=False):
         optionals = {
-            "type": "fn o_type<T>(t: &T) -> String {\n    std::any::type_name::<T>().to_string()\n}"
+            "type": "fn o_type<T>(t: &T) -> String {\n    std::any::type_name::<T>().to_string()\n}" if dev_mode else "fn o_type<T>(t: &T) -> String {std::any::type_name::<T>().to_string()}",
         }
         for instruction in self.instructions:
             if instruction.opcode in self.opcode_map:
+                if instruction.starts_line and dev_mode:
+                    self.transpiled_commands.append(f"/* {instruction.starts_line} */")
                 exec(self.opcode_map[instruction.opcode])
+                
                 
         self.instructions
         
@@ -204,17 +207,27 @@ class Compiler:
             for optional in self.optionals:
                 if optional in optionals:
                     f.write(optionals[optional])
-                    f.write("\n")
-                f.write("\n")
-            f.write("fn main() {\n")
+                    f.write("\n") if dev_mode else None
+                f.write("\n") if dev_mode else None
+            f.write("fn main() {\n") if dev_mode else f.write("fn main() {")
             for command in self.transpiled_commands:
-                f.write(f"    {command}\n")
-            f.write("}\n")
+                f.write(f"{command}\n") if dev_mode else f.write(f"{command}")
+            f.write("}\n") if dev_mode else f.write("}")
+            
+        
         try:
-            subprocess.run(["rustc", f"{output_name}.rs", "-o", f"{output_name}"], check=True)
+            rustc_process = subprocess.run(["rustc", f"{output_name}.rs", "-o", f"{output_name}"], 
+                                          capture_output=True, text=True)
             if print_output:
-                subprocess.run([f"./{output_name}"], check=True)
-            return True
+                print(rustc_process.stdout)
+            if rustc_process.returncode != 0:
+                print(f"Compilation error: {rustc_process.stderr}")
+                raise subprocess.CalledProcessError(rustc_process.returncode, ["rustc"])
+                
+            if print_output:
+                output_process = subprocess.run([f"./{output_name}"], capture_output=True, text=True)
+                output = output_process.stdout
+                return output.removesuffix("\n")
         except:
             print("Compilation failed. Please check your code.")
             return False

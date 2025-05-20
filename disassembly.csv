@@ -1,20 +1,21 @@
-opname      , opcode, arg, argval      , argrepr     , offset, starts_line, is_jump_target
-RESUME      ,    151,   0, 0           ,             ,      0,           3, False
-LOAD_CONST  ,    100,   1, Kevin       , 'Kevin'     ,      2,           4, False
-STORE_FAST  ,    125,   0, name        , name        ,      4,            , False
-LOAD_CONST  ,    100,   2, 30          , 30          ,      6,           5, False
-STORE_FAST  ,    125,   1, age         , age         ,      8,            , False
-LOAD_FAST   ,    124,   1, age         , age         ,     10,           6, False
-LOAD_CONST  ,    100,   3, 1           , 1           ,     12,            , False
-BINARY_OP   ,    122,   0, 0           , +           ,     14,            , False
-STORE_FAST  ,    125,   2, age1        , age1        ,     18,            , False
-LOAD_GLOBAL ,    116,   1, type        , NULL + type ,     20,           7, False
-LOAD_FAST   ,    124,   0, name        , name        ,     30,            , False
-CALL        ,    171,   1, 1           ,             ,     32,            , False
-STORE_FAST  ,    125,   3, type_of_name, type_of_name,     40,            , False
-LOAD_GLOBAL ,    116,   3, print       , NULL + print,     42,           8, False
-LOAD_FAST   ,    124,   1, age         , age         ,     52,            , False
-LOAD_FAST   ,    124,   0, name        , name        ,     54,            , False
-CALL        ,    171,   2, 2           ,             ,     56,            , False
-POP_TOP     ,      1,    ,             ,             ,     64,            , False
-RETURN_CONST,    121,   0,             , None        ,     66,           9, False
+opname       , opcode, arg, argval, argrepr     , offset, starts_line, is_jump_target
+RESUME       ,    151,   0, 0     ,             ,      0,           3, False
+LOAD_CONST   ,    100,   1, Kevin , 'Kevin'     ,      2,           4, False
+STORE_FAST   ,    125,   0, name  , name        ,      4,            , False
+LOAD_CONST   ,    100,   2, 29    , 29          ,      6,           5, False
+STORE_FAST   ,    125,   1, age   , age         ,      8,            , False
+LOAD_GLOBAL  ,    116,   1, range , NULL + range,     10,           6, False
+LOAD_CONST   ,    100,   3, 10    , 10          ,     20,            , False
+CALL         ,    171,   1, 1     ,             ,     22,            , False
+GET_ITER     ,     68,    ,       ,             ,     30,            , False
+FOR_ITER     ,     93,  14, 64    , to 64       ,     32,            , True
+STORE_FAST   ,    125,   2, i     , i           ,     36,            , False
+LOAD_GLOBAL  ,    116,   3, print , NULL + print,     38,           7, False
+LOAD_FAST    ,    124,   1, age   , age         ,     48,            , False
+LOAD_FAST    ,    124,   0, name  , name        ,     50,            , False
+CALL         ,    171,   2, 2     ,             ,     52,            , False
+POP_TOP      ,      1,    ,       ,             ,     60,            , False
+JUMP_BACKWARD,    140,  16, 32    , to 32       ,     62,            , False
+END_FOR      ,      4,    ,       ,             ,     64,           6, True
+RETURN_CONST ,    121,   0,       , None        ,     66,           8, False
+åa1 zq`~
